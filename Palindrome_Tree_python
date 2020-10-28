@@ -1,0 +1,77 @@
+class PalindromTree:
+    def __init__(self,s):
+        self.s=s
+        self.NegNode=PalindromicNode()
+        self.NegNode.addSufLink(self.NegNode)
+        self.NullNode=PalindromicNode(SuffixLink=self.NegNode,length=0)
+        self.CurrentNode=self.NegNode
+        self.CurrentLetter=0
+        
+    def addNode(self):
+        while True:
+            if self.CurrentNode==self.NegNode:
+                if self.s[self.CurrentLetter] not in self.CurrentNode.InsertionLinks.keys():
+                    Node=PalindromicNode(SuffixLink=self.NullNode,length=1)
+                    self.CurrentNode.InsertionLinks[self.s[self.CurrentLetter]]=Node
+                    self.CurrentLetter+=1
+                    self.CurrentNode=Node
+                    break
+                else:
+                    self.CurrentNode=self.CurrentNode.InsertionLinks[self.s[self.CurrentLetter]]
+                    self.CurrentLetter+=1
+                    break
+            else:
+                if self.CurrentLetter-self.CurrentNode.length-1 < 0 or self.s[self.CurrentLetter]!=self.s[self.CurrentLetter-self.CurrentNode.length-1]:
+                    self.CurrentNode=self.CurrentNode.SuffixLink
+                else:
+                    if self.s[self.CurrentLetter] not in self.CurrentNode.InsertionLinks.keys():
+                        Node=PalindromicNode(length=self.CurrentNode.length+2)
+                        self.CurrentNode.InsertionLinks[self.s[self.CurrentLetter]]=Node
+                        tmp=self.CurrentNode.SuffixLink
+                        while True:
+                            if tmp!=self.NegNode and self.s[self.CurrentLetter]!=self.s[self.CurrentLetter-tmp.length-1]:
+                                tmp=tmp.SuffixLink
+                            else:
+                                Node.addSufLink(tmp.InsertionLinks[self.s[self.CurrentLetter]])
+                                break 
+                        self.CurrentLetter+=1
+                        self.CurrentNode=Node
+                        break
+                    else:
+                        self.CurrentNode=self.CurrentNode.InsertionLinks[self.s[self.CurrentLetter]]
+                        self.CurrentLetter+=1
+                        break
+
+    def printtree(self):
+        self.NegNode.printNode()
+        self.NullNode.printNode()
+
+    def CheckAddibility(self):
+        if self.CurrentNode==self.NegNode:
+            return False
+        elif self.CurrentLetter-self.CurrentNode.length-1 >= 0 and self.s[self.CurrentLetter]==self.s[self.CurrentLetter-self.CurrentNode.length-1]:
+            return True
+        else:
+            return False
+
+class PalindromicNode:
+    def __init__(self,InsertionLinks=None,SuffixLink=None, length=None):
+        if InsertionLinks==None:
+            self.InsertionLinks={}
+        if length!=None:
+            self.length=length
+        else:
+            self.length=-1
+        if SuffixLink!=None:
+            self.SuffixLink=SuffixLink
+
+    def printNode(self,order=1):
+        print(self.name)
+        for key in self.InsertionLinks.keys():
+            print('    '*order, end = '')
+            self.InsertionLinks[key].printNode(order = order+1)
+
+    def addSufLink(self,SuffixLink):
+        self.SuffixLink=SuffixLink
+    def addInsertionLink(self,Node,link):
+        self.InsertionLinks[link]=Node
