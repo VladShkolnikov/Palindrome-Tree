@@ -1,4 +1,4 @@
-class PalindromTree:
+class PalindromeTree:
     def __init__(self,s):
         self.s=s
         self.NegNode=PalindromicNode()
@@ -45,14 +45,6 @@ class PalindromTree:
     def printtree(self):
         self.NegNode.printNode()
         self.NullNode.printNode()
-
-    def CheckAddibility(self):
-        if self.CurrentNode==self.NegNode:
-            return False
-        elif self.CurrentLetter-self.CurrentNode.length-1 >= 0 and self.s[self.CurrentLetter]==self.s[self.CurrentLetter-self.CurrentNode.length-1]:
-            return True
-        else:
-            return False
 
 class PalindromicNode:
     def __init__(self,InsertionLinks=None,SuffixLink=None, length=None):
